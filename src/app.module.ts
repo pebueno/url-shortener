@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UrlsModule } from './urls/urls.module';
+import { VisitsModule } from './visits/visits.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),  
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -21,6 +22,7 @@ import { UrlsModule } from './urls/urls.module';
       }),
     }),
     UrlsModule,
+    VisitsModule,
   ],
 })
 export class AppModule {}
