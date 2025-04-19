@@ -2,6 +2,7 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -25,7 +26,7 @@ export class UrlsService {
     return slug;
   }
 
-  async create(dto: CreateUrlDto): Promise<UrlEntity> {
+  async create(dto: CreateUrlDto, userId: string): Promise<UrlEntity> {
     let slug = dto.slug ?? this.generateSlug();
     if (dto.slug && (await this.urlRepo.findOneBy({ slug }))) {
       throw new ConflictException('Slug already in use');
@@ -33,12 +34,30 @@ export class UrlsService {
     while (!dto.slug && (await this.urlRepo.findOneBy({ slug }))) {
       slug = this.generateSlug();
     }
-    const url = this.urlRepo.create({ slug, target: dto.target });
+    const url = this.urlRepo.create({ slug, target: dto.target, userId });
     return this.urlRepo.save(url);
   }
 
-  findAll(): Promise<UrlEntity[]> {
+  async updateSlug(
+    oldSlug: string,
+    newSlug: string,
+    userId: string,
+  ): Promise<UrlEntity> {
+    const url = await this.findBySlug(oldSlug);
+    if (url.userId !== userId) throw new ForbiddenException();
+    if (await this.urlRepo.findOneBy({ slug: newSlug })) {
+      throw new ConflictException('Slug already in use');
+    }
+    url.slug = newSlug;
+    return this.urlRepo.save(url);
+  }
+
+  async findAllGlobal(): Promise<UrlEntity[]> {
     return this.urlRepo.find();
+  }
+
+  async findAllForUser(userId: string): Promise<UrlEntity[]> {
+    return this.urlRepo.find({ where: { userId } });
   }
 
   async findBySlug(slug: string): Promise<UrlEntity> {

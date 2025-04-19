@@ -8,7 +8,7 @@ import { VisitsModule } from '../visits/visits.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([UrlEntity]),
-    forwardRef(() => VisitsModule), // allow injecting VisitsService
+    forwardRef(() => VisitsModule),
   ],
   providers: [UrlsService],
   controllers: [UrlsController],

@@ -3,11 +3,13 @@ import {
   Get,
   Param,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiNotFoundResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiNotFoundResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { VisitsService } from './visits.service';
 import { UrlsService } from '../urls/urls.service';
 import { VisitEntity } from './visit.entity';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 
 @ApiTags('visits')
 @Controller('api/urls/:slug/visits')
@@ -17,6 +19,8 @@ export class VisitsController {
     private readonly urlsService: UrlsService,
   ) {}
 
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOkResponse({
     description: 'List of all visits for this slug',
