@@ -9,6 +9,8 @@ async function bootstrap() {
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
 
+  const port = process.env.PORT || 5000;
+
   const config = new DocumentBuilder()
     .setTitle('URL Shortener API')
     .setVersion('1.0')
@@ -26,6 +28,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
 
-  await app.listen(3000);
+  await app.listen(port, () => {
+    console.log(`🚀 Server is running at http://localhost:${port}`);
+    console.log(`📑 Swagger docs available at http://localhost:${port}/api-docs`);
+  });
 }
 bootstrap();
