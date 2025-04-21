@@ -2,17 +2,20 @@ import { notFound, redirect } from 'next/navigation';
 
 import { SlugPageProps } from '../../components/common/types';
 
-export default async function SlugPage({ params }: SlugPageProps) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/urls/${params.slug}`,
-    { cache: 'no-store' },
-  );
+export default async function SlugPage({ params: { slug } }: SlugPageProps) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${slug}`, {
+    redirect: 'manual',
+  });
 
-  if (!res.ok) {
-    return notFound();
+  if (res.status === 404) {
+    notFound();
   }
 
-  const { target } = await res.json();
+  if (![301, 302, 307, 308].includes(res.status)) {
+    notFound();
+  }
 
+  const target = res.headers.get('location');
+  if (!target) notFound();
   redirect(target);
 }

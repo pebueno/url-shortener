@@ -5,16 +5,20 @@ import { useUrlShortener } from '../contexts/useUrlShortener';
 
 export default function HomeForm() {
   const [url, setUrl] = useState('');
+  const [copied, setCopied] = useState(false);
   const { shortUrl, loading, error, shorten } = useUrlShortener();
 
-  const handleSubmit = async (e: FormEvent) => {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    try {
-      await shorten(url);
-    } catch {
-      console.log(error);
-    }
-  };
+    setCopied(false);
+    await shorten(url);
+  }
+
+  function handleCopy() {
+    if (!shortUrl) return;
+    navigator.clipboard.writeText(shortUrl);
+    setCopied(true);
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -35,16 +39,29 @@ export default function HomeForm() {
         {loading ? 'Shortening…' : 'Shorten'}
       </button>
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-
       {shortUrl && (
-        <div className="mt-4 p-4 bg-green-50 rounded">
-          <p className="text-green-700">Success! Your short URL:</p>
-          <a href={shortUrl} className="text-purple-600 underline break-all">
-            {shortUrl}
-          </a>
-        </div>
+        <>
+          <p className="text-green-600">Success! Here’s your short URL:</p>
+          <div className="flex items-center space-x-2">
+            <a
+              href={shortUrl}
+              target="_blank"
+              className="text-purple-600 underline break-all"
+            >
+              {shortUrl}
+            </a>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100"
+            >
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
+        </>
       )}
+
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </form>
   );
 }
