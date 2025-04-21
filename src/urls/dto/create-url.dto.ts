@@ -6,7 +6,11 @@ export class CreateUrlDto {
     description: 'The original URL to shorten',
     example: 'https://example.com/foo/bar',
   })
-  @IsUrl({}, { message: 'target must be a valid URL' })
+  // @IsUrl({}, { message: 'target must be a valid URL' })
+  @IsUrl(
+    { protocols: ['http', 'https'], require_tld: true, require_protocol: true },
+    { message: 'target must be a valid URL including http(s)://' },
+  )
   target: string;
 
   @ApiPropertyOptional({

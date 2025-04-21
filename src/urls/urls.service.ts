@@ -3,6 +3,7 @@ import {
   ConflictException,
   NotFoundException,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -26,7 +27,21 @@ export class UrlsService {
     return slug;
   }
 
+  private async assertReachable(url: string) {
+    try {
+      // Use HEAD so we don't download the whole page
+      const res = await fetch(url, { method: 'HEAD' });
+      if (!res.ok) {
+        throw new Error(`Status ${res.status}`);
+      }
+    } catch (err) {
+      throw new BadRequestException(`Target URL not reachable: ${err.message}`);
+    }
+  }
+
   async create(dto: CreateUrlDto, userId: string): Promise<UrlEntity> {
+    await this.assertReachable(dto.target);
+
     let slug = dto.slug ?? this.generateSlug();
     if (dto.slug && (await this.urlRepo.findOneBy({ slug }))) {
       throw new ConflictException('Slug already in use');
@@ -61,9 +76,9 @@ export class UrlsService {
       .createQueryBuilder('url')
       .where('url.userId = :userId', { userId })
       .loadRelationCountAndMap('url.visits', 'url.visits')
-      .getMany()
+      .getMany();
   }
-  
+
   async findBySlug(slug: string): Promise<UrlEntity> {
     const url = await this.urlRepo.findOneBy({ slug });
     if (!url) throw new NotFoundException('Slug not found');

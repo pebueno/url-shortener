@@ -19,3 +19,8 @@ export interface UrlItem {
   slug: string;
   visits: number;
 }
+
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  loading?: boolean;
+  loadingText?: string;
+}
