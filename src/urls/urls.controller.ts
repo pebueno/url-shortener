@@ -29,6 +29,7 @@ import { CreateUrlDto } from './dto/create-url.dto';
 import { UpdateUrlDto } from './dto/update-url.dto';
 import { UrlResponseDto } from './dto/url-response.dto';
 import { VisitEntity } from '../visits/visit.entity';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('urls')
 @Controller()
@@ -69,7 +70,7 @@ export class UrlsController {
   @UseGuards(JwtAuthGuard)
   @Get('api/urls')
   @ApiOkResponse({ type: [UrlResponseDto] })
-  getMine(@Request() req): Promise<UrlResponseDto[]> {
+  getMyUrls(@Request() req: Request & { user: { id: string } }) {
     return this.urlsService.findAllForUser(req.user.id);
   }
 
@@ -85,6 +86,7 @@ export class UrlsController {
   @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard)
   @Patch('api/urls/:slug')
+  @Throttle({ default: { ttl: 10000, limit: 100 } })
   @ApiOkResponse({ type: UrlResponseDto })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()

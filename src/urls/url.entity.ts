@@ -1,9 +1,10 @@
-// src/urls/url.entity.ts
+import { VisitEntity } from 'src/visits/visit.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('url')
@@ -22,4 +23,7 @@ export class UrlEntity {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @OneToMany(() => VisitEntity, (visit) => visit.url)
+  visits: VisitEntity[];
 }

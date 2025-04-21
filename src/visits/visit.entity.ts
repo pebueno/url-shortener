@@ -16,7 +16,7 @@ export class VisitEntity {
   @Column()
   urlId: string;
 
-  @ManyToOne(() => UrlEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UrlEntity, (url) => url.visits, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'urlId' })
   url: UrlEntity;
 
