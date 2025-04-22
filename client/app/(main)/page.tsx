@@ -1,9 +1,9 @@
 'use client';
 
 import Head from 'next/head';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import HomeForm from '../components/HomeForm';
+import HomeForm from '../../components/HomeForm';
 import { useEffect } from 'react';
 
 export default function HomePage() {

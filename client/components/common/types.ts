@@ -12,3 +12,10 @@ export interface SlugPageProps {
     slug: string;
   };
 }
+
+export interface UrlItem {
+  id: string;
+  target: string;
+  slug: string;
+  visits: number;
+}

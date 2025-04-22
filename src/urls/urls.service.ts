@@ -55,18 +55,6 @@ export class UrlsService {
   async findAllGlobal(): Promise<UrlEntity[]> {
     return this.urlRepo.find();
   }
-  // async findAllGlobal(): Promise<UrlEntity[]> {
-  //   // instead of a plain find(), use QueryBuilder to load a `visits` count
-  //   return this.urlRepo
-  //     .createQueryBuilder('url')
-  //     // adds a `.visits: number` property on each UrlEntity
-  //     .loadRelationCountAndMap('url.visits', 'url.visits')
-  //     .getMany();
-  // }
-
-  // async findAllForUser(userId: string): Promise<UrlEntity[]> {
-  //   return this.urlRepo.find({ where: { userId } });
-  // }
 
   async findAllForUser(userId: string): Promise<UrlEntity[]> {
     return this.urlRepo

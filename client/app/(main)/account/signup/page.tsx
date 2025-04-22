@@ -2,7 +2,8 @@
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth } from '../../../../contexts/AuthContext';
+import { Button } from '../../../../components/Button';
 
 export default function SignupPage() {
   const { signup, user } = useAuth();
@@ -62,13 +63,9 @@ export default function SignupPage() {
             placeholder="••••••••"
           />
         </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue‑600 text-white py-2 rounded hover:bg-blue‑700 disabled:bg-blue‑300"
-        >
-          {loading ? 'Signing up…' : 'Sign Up'}
-        </button>
+        <Button type="submit" loading={loading} loadingText="Signing up…">
+          Sign Up
+        </Button>
         <p className="text-sm">
           Already have an account?{' '}
           <a href="/account/login" className="text-blue‑600 hover:underline">
